@@ -5,14 +5,14 @@ import 'package:my_daily/app/routes/app_routes.dart';
 
 import '../controllers/home_controller.dart';
 
-import '../widgets/greeting_card.dart';
+import '../widgets/home_header.dart';
 import '../widgets/mood_card.dart';
 import '../widgets/today_activity_card.dart';
 import '../widgets/quick_menu_card.dart';
 import '../widgets/weekly_mood_card.dart';
 import '../widgets/progress_card.dart';
-import '../widgets/mini_calendar_card.dart';
 import '../widgets/statistics_preview_card.dart';
+import '../widgets/calendar_card.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -22,31 +22,19 @@ class HomePage extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xff6C63FF),
-        onPressed: () {
-          Get.toNamed(AppRoutes.addNote);
-        },
-        icon: const Icon(Icons.add),
-        label: const Text("Tambah Aktivitas"),
-      ),
-
       body: SafeArea(
         child: Obx(
           () => SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GreetingCard(
-                  greeting: controller.greeting.value,
+
+                HomeHeader(
                   username: controller.username.value,
-                  date: controller.currentDate.value,
+                  subtitle: controller.greeting.value,
+                  photoUrl: controller.photoUrl.value,
                 ),
-
-                const SizedBox(height: 20),
-
-                const MiniCalendarCard(),
 
                 const SizedBox(height: 20),
 
@@ -54,6 +42,10 @@ class HomePage extends GetView<HomeController> {
                   completed: controller.completedTask.value,
                   total: controller.totalTask.value,
                 ),
+
+                const SizedBox(height: 20),
+
+                const CalendarCard(),
 
                 const SizedBox(height: 20),
 

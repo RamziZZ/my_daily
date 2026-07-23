@@ -1,41 +1,40 @@
 import 'package:get/get.dart';
 
-import '../../../services/theme_service.dart';
-import '../../../services/settings_service.dart';
-import '../../../data/repositories/note_repository.dart';
+import '../../../app/routes/app_routes.dart';
 
-import '../../home/controllers/home_controller.dart';
+import '../../../services/auth_service.dart';
+import '../../../services/settings_service.dart';
+import '../../../services/theme_service.dart';
+import '../../../data/repositories/note_repository.dart';
 import '../../history/controllers/history_controller.dart';
-import '../../calendar/controllers/calendar_controller.dart';
+import '../../home/controllers/home_controller.dart';
 import '../../statistics/controllers/statistics_controller.dart';
 
 class SettingsController extends GetxController {
-  // Services
+
+  // SERVICES
   final ThemeService themeService = Get.find<ThemeService>();
   final SettingsService settingsService = Get.find<SettingsService>();
+  final AuthService authService = Get.find<AuthService>();
 
-  // Repository
+  // REPOSITORY
   final NoteRepository repository = Get.find<NoteRepository>();
 
-  // User
+  // STATE
   final username = "".obs;
-
-  // Notification
   final notification = true.obs;
-
-  // Theme
-  late RxBool isDarkMode;
+  final isDarkMode = false.obs;
 
   @override
   void onInit() {
     super.onInit();
 
-    isDarkMode = themeService.isDark.obs;
+    isDarkMode.value = themeService.isDark;
 
     loadSettings();
   }
 
-  // LOAD SETTINGS
+  // LOAD SETTING
   Future<void> loadSettings() async {
     username.value = await settingsService.getUsername();
     notification.value = await settingsService.getNotification();
@@ -53,6 +52,7 @@ class SettingsController extends GetxController {
   // DARK MODE
   Future<void> toggleDarkMode(bool value) async {
     isDarkMode.value = value;
+
     await themeService.saveTheme(value);
   }
 
@@ -81,9 +81,6 @@ class SettingsController extends GetxController {
       await Get.find<HistoryController>().refreshData();
     }
 
-    if (Get.isRegistered<CalendarController>()) {
-      await Get.find<CalendarController>().refreshData();
-    }
 
     if (Get.isRegistered<StatisticsController>()) {
       await Get.find<StatisticsController>().refreshData();
@@ -91,10 +88,35 @@ class SettingsController extends GetxController {
 
     Get.back();
 
+    await refreshData();
+
     Get.snackbar(
       "Success",
       "All activities have been deleted successfully.",
       snackPosition: SnackPosition.BOTTOM,
     );
+  }
+
+  // LOGOUT
+  Future<void> logout() async {
+    try {
+      await authService.logout();
+
+      Get.back();
+
+      Get.offAllNamed(AppRoutes.login);
+
+      Get.snackbar(
+        "Success",
+        "Logout berhasil.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }

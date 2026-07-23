@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/history_controller.dart';
-import '../../add_note/controllers/add_note_controller.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../app/widgets/page_padding.dart';
+import '../../add_note/controllers/add_note_controller.dart';
+import '../controllers/history_controller.dart';
 
 class HistoryPage extends GetView<HistoryController> {
   const HistoryPage({super.key});
@@ -12,14 +13,22 @@ class HistoryPage extends GetView<HistoryController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Obx(
-        () => Column(
-          children: [
 
-            // SEARCH
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-              child: TextField(
+      body: PagePadding(
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Riwayat Aktivitas",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextField(
                 onChanged: controller.searchNote,
                 decoration: InputDecoration(
                   hintText: "Cari aktivitas...",
@@ -32,218 +41,213 @@ class HistoryPage extends GetView<HistoryController> {
                   ),
                 ),
               ),
-            ),
 
-            // FILTER + SORT
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
+              const SizedBox(height: 15),
+
+              Row(
                 children: [
-
                   Expanded(
                     child: SizedBox(
                       height: 40,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-
                           _buildChip("Semua"),
                           _buildChip("Hari Ini"),
                           _buildChip("Minggu"),
                           _buildChip("Bulan"),
-
                         ],
                       ),
                     ),
                   ),
-
-                  const SizedBox(width: 10),
 
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.sort),
 
                     onSelected: controller.changeSort,
 
-                    itemBuilder: (context) => const [
-
+                    itemBuilder: (_) => const [
                       PopupMenuItem(
                         value: "Newest",
                         child: Text("Terbaru"),
                       ),
-
                       PopupMenuItem(
                         value: "Oldest",
                         child: Text("Terlama"),
                       ),
-
                     ],
                   ),
-
                 ],
               ),
-            ),
 
-            const SizedBox(height: 15),
+              const SizedBox(height: 15),
 
-            // LIST
-            Expanded(
-              child: controller.filteredNotes.isEmpty
-                  ? _buildEmptyState(context)
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: controller.filteredNotes.length,
-                      itemBuilder: (context, index) {
-                        final note = controller.filteredNotes[index];
+              Expanded(
+                child: controller.filteredNotes.isEmpty
+                    ? _buildEmptyState(context)
+                    : ListView.builder(
+                        itemCount: controller.filteredNotes.length,
+                        itemBuilder: (context, index) {
+                          final note =
+                              controller.filteredNotes[index];
 
-                        return Dismissible(
-                          key: ValueKey(note.id),
+                          return Dismissible(
+                            key: ValueKey(note.id),
 
-                          direction: DismissDirection.endToStart,
+                            direction:
+                                DismissDirection.endToStart,
 
-                          confirmDismiss: (_) async {
-                            return await Get.dialog<bool>(
-                              AlertDialog(
-                                title: const Text("Hapus Aktivitas"),
-                                content: Text(
-                                  "Hapus '${note.activity}' ?",
-                                ),
-                                actions: [
-
-                                  TextButton(
-                                    onPressed: () {
-                                      Get.back(result: false);
-                                    },
-                                    child: const Text("Batal"),
+                            confirmDismiss: (_) async {
+                              return await Get.dialog<bool>(
+                                AlertDialog(
+                                  title: const Text(
+                                      "Hapus Aktivitas"),
+                                  content: Text(
+                                    "Hapus '${note.activity}' ?",
                                   ),
-
-                                  FilledButton(
-                                    style: FilledButton.styleFrom(
-                                      backgroundColor: Colors.red,
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Get.back(
+                                              result: false),
+                                      child:
+                                          const Text("Batal"),
                                     ),
-                                    onPressed: () {
-                                      Get.back(result: true);
-                                    },
-                                    child: const Text("Hapus"),
-                                  ),
-
-                                ],
-                              ),
-                            );
-                          },
-
-                          onDismissed: (_) {
-                            controller.deleteNote(note.id);
-                          },
-
-                          background: Container(
-                            margin: const EdgeInsets.only(bottom: 15),
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 24),
-
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-
-                          child: Card(
-                            color: Theme.of(context).cardColor,
-                            margin: const EdgeInsets.only(bottom: 15),
-
-                            child: ListTile(
-                              onTap: () {
-                                final addController =
-                                    Get.find<AddNoteController>();
-
-                                addController.loadNote(note);
-
-                                Get.toNamed(AppRoutes.addNote);
-                              },
-
-                              contentPadding:
-                                  const EdgeInsets.all(16),
-
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    Colors.deepPurple.withValues(alpha: .12),
-                                child: Text(
-                                  note.mood,
-                                  style: const TextStyle(fontSize: 22),
+                                    FilledButton(
+                                      style:
+                                          FilledButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.red,
+                                      ),
+                                      onPressed: () =>
+                                          Get.back(
+                                              result: true),
+                                      child:
+                                          const Text("Hapus"),
+                                    ),
+                                  ],
                                 ),
+                              );
+                            },
+
+                            onDismissed: (_) {
+                              controller.deleteNote(
+                                  note.id);
+                            },
+
+                            background: Container(
+                              margin:
+                                  const EdgeInsets.only(
+                                      bottom: 15),
+                              alignment:
+                                  Alignment.centerRight,
+                              padding:
+                                  const EdgeInsets.only(
+                                      right: 24),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                    BorderRadius.circular(
+                                        18),
                               ),
-
-                              title: Text(
-                                note.activity,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface,
-                                ),
-                              ),
-
-                              subtitle: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-
-                                  const SizedBox(height: 6),
-
-                                  Text(
-                                    note.note.isEmpty
-                                        ? "-"
-                                        : note.note,
-                                  ),
-
-                                  const SizedBox(height: 10),
-
-                                  Row(
-                                    children: [
-
-                                      const Icon(
-                                        Icons.calendar_today,
-                                        size: 14,
-                                      ),
-
-                                      const SizedBox(width: 5),
-
-                                      Text(
-                                        "${note.date.day}/${note.date.month}/${note.date.year}",
-                                      ),
-
-                                      const SizedBox(width: 15),
-
-                                      const Icon(
-                                        Icons.access_time,
-                                        size: 14,
-                                      ),
-
-                                      const SizedBox(width: 5),
-
-                                      Text(note.time),
-
-                                    ],
-                                  ),
-
-                                ],
-                              ),
-
-                              trailing: const Icon(
-                                Icons.chevron_right,
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 30,
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
+
+                            child: Card(
+                              margin:
+                                  const EdgeInsets.only(
+                                      bottom: 15),
+                              child: ListTile(
+                                onTap: () {
+                                  final addController = Get.find<AddNoteController>();
+                                  addController.loadNote(note);
+                                  Get.toNamed(AppRoutes.addNote);
+
+                                },
+
+                                contentPadding:
+                                    const EdgeInsets.all(
+                                        16),
+
+                                leading: CircleAvatar(
+                                  backgroundColor:
+                                      Colors.deepPurple
+                                          .withValues(alpha: 0.15),
+                                  child: Text(
+                                    note.mood,
+                                    style:
+                                        const TextStyle(
+                                            fontSize: 22),
+                                  ),
+                                ),
+
+                                title: Text(
+                                  note.activity,
+                                  style:
+                                      const TextStyle(
+                                    fontWeight:
+                                        FontWeight.bold,
+                                  ),
+                                ),
+
+                                subtitle: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                  children: [
+                                    const SizedBox(
+                                        height: 6),
+
+                                    Text(
+                                      note.note.isEmpty
+                                          ? "-"
+                                          : note.note,
+                                    ),
+
+                                    const SizedBox(
+                                        height: 10),
+
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons
+                                              .calendar_today,
+                                          size: 14,
+                                        ),
+                                        const SizedBox(
+                                            width: 5),
+                                        Text(
+                                          "${note.date.day}/${note.date.month}/${note.date.year}",
+                                        ),
+                                        const SizedBox(
+                                            width: 15),
+                                        const Icon(
+                                          Icons
+                                              .access_time,
+                                          size: 14,
+                                        ),
+                                        const SizedBox(
+                                            width: 5),
+                                        Text(note.time),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                trailing:
+                                    const Icon(Icons.chevron_right),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -255,13 +259,10 @@ class HistoryPage extends GetView<HistoryController> {
         padding: const EdgeInsets.only(right: 8),
         child: ChoiceChip(
           label: Text(title),
-
           selected:
               controller.selectedFilter.value == title,
-
-          onSelected: (_) {
-            controller.changeFilter(title);
-          },
+          onSelected: (_) =>
+              controller.changeFilter(title),
         ),
       ),
     );
@@ -272,17 +273,15 @@ class HistoryPage extends GetView<HistoryController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           Icon(
             Icons.history_toggle_off_rounded,
             size: 90,
-            color: Theme.of(context).colorScheme.primary,
+            color:
+                Theme.of(context).colorScheme.primary,
           ),
-
           const SizedBox(height: 18),
-
           Text(
-            "Tidak ada aktivitas yang ditemukan",
+            "Tidak ada aktivitas",
             style: Theme.of(context)
                 .textTheme
                 .titleLarge
@@ -290,19 +289,17 @@ class HistoryPage extends GetView<HistoryController> {
                   fontWeight: FontWeight.bold,
                 ),
           ),
-
           const SizedBox(height: 8),
-
           Text(
             "Mulai menulis aktivitas harian Anda ✨",
             style: TextStyle(
               color: Theme.of(context)
                   .colorScheme
                   .onSurface
-                  .withValues(alpha: .65),
+                  .withValues(alpha: 0.15,
             ),
           ),
-
+          )
         ],
       ),
     );

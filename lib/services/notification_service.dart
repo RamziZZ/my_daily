@@ -9,10 +9,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-
     const settings = InitializationSettings(
-      android: android,
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
 
     await notifications.initialize(
@@ -24,16 +22,14 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    const android = AndroidNotificationDetails(
-      'daily_channel',
-      'Daily Reminder',
-      channelDescription: 'Notification for MyDaily App',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
     const details = NotificationDetails(
-      android: android,
+      android: AndroidNotificationDetails(
+        'daily_channel',
+        'Daily Reminder',
+        channelDescription: 'Notification for MyDaily App',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
     );
 
     await notifications.show(

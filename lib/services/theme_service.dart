@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter/material.dart';
 
 class ThemeService extends GetxService {
   static const String boxName = "settings";
@@ -11,18 +11,20 @@ class ThemeService extends GetxService {
   Future<ThemeService> init() async {
     box = await Hive.openBox(boxName);
 
-    final isDark = box.get(keyDarkMode, defaultValue: false);
-
-    Get.changeThemeMode(
-      isDark ? ThemeMode.dark : ThemeMode.light,
-    );
+    Get.changeThemeMode(themeMode);
 
     return this;
   }
 
+  /// Apakah Dark Mode aktif
   bool get isDark =>
       box.get(keyDarkMode, defaultValue: false);
 
+  /// ThemeMode untuk MaterialApp
+  ThemeMode get themeMode =>
+      isDark ? ThemeMode.dark : ThemeMode.light;
+
+  /// Simpan tema
   Future<void> saveTheme(bool value) async {
     await box.put(keyDarkMode, value);
 

@@ -1,160 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GreetingCard extends StatelessWidget {
-  final String greeting;
   final String username;
+  final String greeting;
   final String date;
+  final String? photoUrl;
 
   const GreetingCard({
     super.key,
-    required this.greeting,
     required this.username,
+    required this.greeting,
     required this.date,
+    this.photoUrl,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasPhoto =
+        photoUrl != null && photoUrl!.trim().isNotEmpty;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF6C63FF),
-            Color(0xFF8D86FF),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.deepPurple.withValues(
-              alpha: isDark ? 0.15 : 0.25,
+    final firstLetter =
+        username.isNotEmpty ? username[0].toUpperCase() : "U";
+
+    return Row(
+      children: [
+
+        /// Avatar
+        Container(
+          width: 62,
+          height: 62,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: const Color(0xff7B61FF),
+              width: 3,
             ),
-            blurRadius: 20,
-            offset: const Offset(0, 12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.deepPurple.withValues(alpha: .15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          /// HEADER
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.wb_sunny_rounded,
-                    color: Colors.amber,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
+          child: CircleAvatar(
+            backgroundColor: const Color(0xffECE8FF),
 
-                  Text(
-                    greeting,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+            backgroundImage:
+                hasPhoto ? NetworkImage(photoUrl!) : null,
+
+            child: !hasPhoto
+                ? Text(
+                    firstLetter,
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xff6C63FF),
                     ),
-                  ),
-                ],
+                  )
+                : null,
+          ),
+        ),
+
+        const SizedBox(width: 16),
+
+        /// Text
+        Expanded(
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+
+              Text(
+                "Halo, $username",
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
 
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: Colors.white,
-                  ),
+              const SizedBox(height: 5),
+
+              Text(
+                "Semangat menjalani hari yang produktif",
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey.shade700,
                 ),
               ),
             ],
           ),
+        ),
 
-          const SizedBox(height: 24),
-
-          /// BODY
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "$username 👋",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    const Text(
-                      "Semoga harimu produktif ✨",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 15,
-                      ),
-                    ),
-
-                    const SizedBox(height: 14),
-
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today_rounded,
-                          color: Colors.white70,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-
-                        Text(
-                          date,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.20),
-                ),
-                child: CircleAvatar(
-                  radius: 34,
-                  backgroundColor: isDark
-                      ? const Color(0xff2A2A2A)
-                      : Colors.white,
-                  child: const Icon(
-                    Icons.person_rounded,
-                    color: Color(0xFF6C63FF),
-                    size: 38,
-                  ),
-                ),
-              ),
-            ],
+        /// Notification
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: const Color(0xffF3F0FF),
+            borderRadius: BorderRadius.circular(15),
           ),
-        ],
-      ),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: Color(0xff6C63FF),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

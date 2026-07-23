@@ -9,7 +9,12 @@ import '../../modules/splash/views/splash_page.dart';
 import '../../modules/add_note/views/add_note_page.dart';
 import '../../modules/add_note/bindings/add_note_binding.dart';
 import '../../modules/main/views/main_page.dart';
+import '../../modules/login/views/login_page.dart';
+import '../../modules/register/views/register_page.dart';
 import '../../modules/main/bindings/main_binding.dart';
+import '../../modules/login/bindings/login_binding.dart';
+import '../../modules/register/bindings/register_binding.dart';
+
 import 'app_routes.dart';
 
 class AppPages {
@@ -55,6 +60,24 @@ class AppPages {
       name: AppRoutes.statistics,
       page: () => const MainPage(),
       binding: MainBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.settings,
+      page: () => const MainPage(),
+      binding: MainBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LoginPage(),
+      binding: LoginBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.register,
+      page: () => const RegisterPage(),
+      binding: RegisterBinding(),
     ),
 
 

@@ -25,48 +25,58 @@ class QuickMenuCard extends StatelessWidget {
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Theme.of(context).cardTheme.color,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).shadowColor.withValues(alpha: 0.15),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
+                color: Theme.of(context)
+                    .shadowColor
+                    .withValues(alpha: 0.10),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
+
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 CircleAvatar(
-                  radius: 24,
+                  radius: 20,
                   backgroundColor: color.withValues(alpha: 0.15),
                   child: Icon(
                     icon,
                     color: color,
-                    size: 26,
+                    size: 20,
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 8),
 
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 15,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface,
                   ),
                 ),
 
-                const SizedBox(height: 5),
+                const SizedBox(height: 2),
 
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
@@ -74,17 +84,17 @@ class QuickMenuCard extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const Spacer(),
 
                 Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: Alignment.centerRight,
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 16,
+                    size: 12,
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withValues(alpha: 0.6),
+                        .withValues(alpha: 0.5),
                   ),
                 ),
               ],

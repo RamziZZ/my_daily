@@ -1,20 +1,30 @@
-import 'dart:async';
-
 import 'package:get/get.dart';
 
+import '../../../services/auth_service.dart';
 import '../../../app/routes/app_routes.dart';
+import 'package:flutter/foundation.dart';
 
 class SplashController extends GetxController {
+  final AuthService authService = Get.find<AuthService>();
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
 
-    Timer(
-      const Duration(seconds: 3),
-      () {
-        Get.offAllNamed(AppRoutes.main);
-      },
-    );
+    _checkLogin();
+  }
+
+  Future<void> _checkLogin() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    debugPrint("===== FIREBASE USER =====");
+    debugPrint(authService.currentUser.toString());
+    debugPrint(authService.isLoggedIn.toString());
+
+    if (authService.isLoggedIn) {
+      Get.offAllNamed(AppRoutes.main);
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
   }
 }

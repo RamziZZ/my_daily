@@ -15,7 +15,6 @@ class SettingsPage extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       body: Obx(
         () => RefreshIndicator(
           onRefresh: controller.refreshData,
@@ -23,15 +22,20 @@ class SettingsPage extends GetView<SettingsController> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(20),
             children: [
+              //--------------------------------------------------
+              // PROFILE
+              //--------------------------------------------------
 
-              /// PROFILE
               ProfileCard(
                 username: controller.username.value,
               ),
 
               const SizedBox(height: 28),
 
-              /// PREFERENCES
+              //--------------------------------------------------
+              // PREFERENCES
+              //--------------------------------------------------
+
               const SectionTitle(
                 title: "Preferences",
               ),
@@ -49,7 +53,6 @@ class SettingsPage extends GetView<SettingsController> {
 
                   Get.defaultDialog(
                     title: "Edit Username",
-
                     content: Padding(
                       padding: const EdgeInsets.all(10),
                       child: TextField(
@@ -59,10 +62,8 @@ class SettingsPage extends GetView<SettingsController> {
                         ),
                       ),
                     ),
-
                     textCancel: "Cancel",
                     textConfirm: "Save",
-
                     onConfirm: () async {
                       await controller.changeUsername(text.text);
                       Get.back();
@@ -77,12 +78,9 @@ class SettingsPage extends GetView<SettingsController> {
                 icon: Icons.dark_mode_rounded,
                 title: "Dark Mode",
                 subtitle: "Enable dark appearance",
-
                 trailing: Switch(
                   value: controller.isDarkMode.value,
-                  onChanged: (value) async {
-                    await controller.toggleDarkMode(value);
-                  },
+                  onChanged: controller.toggleDarkMode,
                 ),
               ),
 
@@ -92,18 +90,18 @@ class SettingsPage extends GetView<SettingsController> {
                 icon: Icons.notifications_active_rounded,
                 title: "Daily Reminder",
                 subtitle: "Receive activity reminder",
-
                 trailing: Switch(
                   value: controller.notification.value,
-                  onChanged: (value) async {
-                    await controller.toggleNotification(value);
-                  },
+                  onChanged: controller.toggleNotification,
                 ),
               ),
 
               const SizedBox(height: 28),
 
-              /// DATA
+              //--------------------------------------------------
+              // DATA
+              //--------------------------------------------------
+
               const SectionTitle(
                 title: "Data",
               ),
@@ -113,18 +111,16 @@ class SettingsPage extends GetView<SettingsController> {
               SettingTile(
                 icon: Icons.delete_forever_rounded,
                 iconColor: Colors.red,
-                title: "Hapus Semua Aktivitas",
+                title: "Delete All Activities",
                 subtitle: "Remove all saved activities",
-
                 onTap: () {
                   Get.defaultDialog(
-                    title: "Hapus Semua",
+                    title: "Delete All Data",
                     middleText:
                         "Are you sure you want to delete all activities?",
-                    textCancel: "Batal",
-                    textConfirm: "Hapus",
+                    textCancel: "Cancel",
+                    textConfirm: "Delete",
                     confirmTextColor: Colors.white,
-
                     onConfirm: () async {
                       await controller.deleteAllData();
                     },
@@ -132,15 +128,46 @@ class SettingsPage extends GetView<SettingsController> {
                 },
               ),
 
+              const SizedBox(height: 12),
+
+              //--------------------------------------------------
+              // LOGOUT
+              //--------------------------------------------------
+
+              SettingTile(
+                icon: Icons.logout_rounded,
+                iconColor: Colors.red,
+                title: "Logout",
+                subtitle: "Sign out from your account",
+                onTap: () {
+                  Get.defaultDialog(
+                    title: "Logout",
+                    middleText:
+                        "Are you sure you want to logout from this account?",
+                    textCancel: "Cancel",
+                    textConfirm: "Logout",
+                    confirmTextColor: Colors.white,
+                    onConfirm: () async {
+                      await controller.logout();
+                    },
+                  );
+                },
+              ),
+
               const SizedBox(height: 28),
 
-              /// ABOUT
+              //--------------------------------------------------
+              // ABOUT
+              //--------------------------------------------------
+
               const SectionTitle(
                 title: "About",
               ),
 
               const SizedBox(height: 12),
+
               const InfoCard(),
+
               const SizedBox(height: 30),
             ],
           ),

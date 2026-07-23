@@ -1,28 +1,35 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:my_daily/data/models/note_model.dart';
-import 'package:my_daily/data/repositories/note_repository.dart';
+import '../../../data/models/note_model.dart';
+import '../../../data/repositories/note_repository.dart';
+import '../../../services/auth_service.dart';
 
 class HomeController extends GetxController {
   final repository = NoteRepository();
+  final AuthService authService = Get.find<AuthService>();
 
-  final username = "Ramzi".obs;
+  // USER
+  final username = "User".obs;
+  final photoUrl = "".obs;
 
+  // GREETING
   final greeting = "".obs;
 
   final currentDate =
       DateFormat("EEEE, dd MMMM yyyy").format(DateTime.now()).obs;
 
+  // NOTES
   RxList<NoteModel> notes = <NoteModel>[].obs;
 
   final completedTask = 0.obs;
   final totalTask = 0.obs;
 
+  // MOOD
   final currentMood = "Happy".obs;
   final currentMoodEmoji = "😊".obs;
 
-  final weeklyMood = [
+  final weeklyMood = <String>[
     "😊",
     "😄",
     "🙂",
@@ -36,15 +43,27 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
 
+    loadUser();
     loadNotes();
     setGreeting();
   }
 
+  // LOAD USER FIREBASE
+  void loadUser() {
+    username.value =
+        authService.currentUser?.displayName ?? "User";
+
+    photoUrl.value =
+        authService.currentUser?.photoURL ?? "";
+  }
+
+  // LOAD NOTES
   Future<void> loadNotes() async {
     notes.value = await repository.getNotes();
 
     totalTask.value = notes.length;
 
+    // sementara semua dianggap selesai
     completedTask.value = notes.length;
 
     if (notes.isNotEmpty) {
@@ -54,9 +73,11 @@ class HomeController extends GetxController {
   }
 
   Future<void> refreshData() async {
+    loadUser();
     await loadNotes();
   }
 
+  // MOOD NAME
   String moodName(String emoji) {
     switch (emoji) {
       case "😁":
@@ -82,6 +103,7 @@ class HomeController extends GetxController {
     }
   }
 
+  // GREETING
   void setGreeting() {
     final hour = DateTime.now().hour;
 

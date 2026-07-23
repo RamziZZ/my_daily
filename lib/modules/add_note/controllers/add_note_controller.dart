@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../../data/models/note_model.dart';
 import '../../../data/repositories/note_repository.dart';
-
 import 'package:my_daily/modules/home/controllers/home_controller.dart';
 import 'package:my_daily/modules/history/controllers/history_controller.dart';
-import 'package:my_daily/modules/calendar/controllers/calendar_controller.dart';
 import 'package:my_daily/modules/statistics/controllers/statistics_controller.dart';
-
 import '../../../services/notification_service.dart';
 
 class AddNoteController extends GetxController {
@@ -21,10 +17,8 @@ class AddNoteController extends GetxController {
 
   final uuid = const Uuid();
 
-  // ==========================
-  // Observable
-  // ==========================
 
+  // Observable
   final selectedMood = "😊".obs;
   final selectedPriority = "Medium".obs;
   final selectedCategory = "Study".obs;
@@ -36,20 +30,15 @@ class AddNoteController extends GetxController {
 
   NoteModel? editingNote;
 
-  // ==========================
-  // FORMAT
-  // ==========================
 
+  // FORMAT
   String get formattedDate =>
       DateFormat('dd MMM yyyy').format(selectedDate.value);
 
   String formattedTime(BuildContext context) =>
       selectedTime.value.format(context);
 
-  // ==========================
   // PICK DATE
-  // ==========================
-
   Future<void> pickDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
@@ -63,10 +52,8 @@ class AddNoteController extends GetxController {
     }
   }
 
-  // ==========================
-  // PICK TIME
-  // ==========================
 
+  // PICK TIME
   Future<void> pickTime(BuildContext context) async {
     final picked = await showTimePicker(
       context: context,
@@ -78,10 +65,7 @@ class AddNoteController extends GetxController {
     }
   }
 
-  // ==========================
   // LOAD NOTE FOR EDIT
-  // ==========================
-
   void loadNote(NoteModel note) {
     editingNote = note;
     isEditing.value = true;
@@ -92,7 +76,6 @@ class AddNoteController extends GetxController {
     selectedMood.value = note.mood;
     selectedPriority.value = note.priority;
     selectedCategory.value = "Study";
-
     selectedDate.value = note.date;
 
     try {
@@ -107,10 +90,7 @@ class AddNoteController extends GetxController {
     }
   }
 
-  // ==========================
   // RESET FORM
-  // ==========================
-
   void resetForm() {
     activityController.clear();
     noteController.clear();
@@ -126,10 +106,7 @@ class AddNoteController extends GetxController {
     isEditing.value = false;
   }
 
-  // ==========================
   // SAVE / UPDATE NOTE
-  // ==========================
-
   Future<void> saveNote() async {
     try {
       if (activityController.text.trim().isEmpty) {
@@ -151,20 +128,14 @@ class AddNoteController extends GetxController {
         time: formattedTime(Get.context!),
       );
 
-      // ==========================
       // SAVE / UPDATE
-      // ==========================
-
       if (isEditing.value) {
         await repository.updateNote(note);
       } else {
         await repository.addNote(note);
       }
 
-      // ==========================
       // NOTIFICATION
-      // ==========================
-
       await NotificationService.instance.showNotification(
         title: isEditing.value
             ? "Activity Updated"
@@ -172,10 +143,7 @@ class AddNoteController extends GetxController {
         body: note.activity,
       );
 
-      // ==========================
       // REFRESH ALL MODULES
-      // ==========================
-
       if (Get.isRegistered<HomeController>()) {
         await Get.find<HomeController>().refreshData();
       }
@@ -184,18 +152,11 @@ class AddNoteController extends GetxController {
         await Get.find<HistoryController>().refreshData();
       }
 
-      if (Get.isRegistered<CalendarController>()) {
-        await Get.find<CalendarController>().refreshData();
-      }
-
       if (Get.isRegistered<StatisticsController>()) {
         await Get.find<StatisticsController>().refreshData();
       }
 
-      // ==========================
       // RESET FORM
-      // ==========================
-
       resetForm();
 
       Get.back();
