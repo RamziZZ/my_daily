@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../app/routes/app_routes.dart';
-
 import '../../../services/auth_service.dart';
 import '../../../services/settings_service.dart';
 import '../../../services/theme_service.dart';
@@ -11,7 +10,6 @@ import '../../home/controllers/home_controller.dart';
 import '../../statistics/controllers/statistics_controller.dart';
 
 class SettingsController extends GetxController {
-
   // SERVICES
   final ThemeService themeService = Get.find<ThemeService>();
   final SettingsService settingsService = Get.find<SettingsService>();
@@ -21,7 +19,9 @@ class SettingsController extends GetxController {
   final NoteRepository repository = Get.find<NoteRepository>();
 
   // STATE
-  final username = "".obs;
+  final username = "User".obs;
+  final email = "".obs;
+
   final notification = true.obs;
   final isDarkMode = false.obs;
 
@@ -31,40 +31,90 @@ class SettingsController extends GetxController {
 
     isDarkMode.value = themeService.isDark;
 
+    loadUser();
     loadSettings();
   }
 
-  // LOAD SETTING
-  Future<void> loadSettings() async {
-    username.value = await settingsService.getUsername();
-    notification.value = await settingsService.getNotification();
+  // LOAD FIREBASE USER
+  void loadUser() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      username.value =
+          user.displayName ??
+          user.email?.split("@").first ??
+          "User";
+
+      email.value = user.email ?? "";
+    }
   }
 
-  // USERNAME
-  Future<void> changeUsername(String value) async {
+  // LOAD SETTINGS
+  Future<void> loadSettings() async {
+    notification.value =
+        await settingsService.getNotification();
+  }
+
+  // CHANGE USERNAME
+  Future<void> changeUsername(
+    String value,
+  ) async {
     if (value.trim().isEmpty) return;
 
-    username.value = value.trim();
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    await settingsService.saveUsername(value.trim());
+      if (user != null) {
+        await user.updateDisplayName(
+          value.trim(),
+        );
+
+        await user.reload();
+
+        loadUser();
+      }
+
+      await settingsService.saveUsername(
+        value.trim(),
+      );
+
+      Get.snackbar(
+        "Berhasil",
+        "Username berhasil diperbarui",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   // DARK MODE
-  Future<void> toggleDarkMode(bool value) async {
+  Future<void> toggleDarkMode(
+    bool value,
+  ) async {
     isDarkMode.value = value;
 
     await themeService.saveTheme(value);
   }
 
   // NOTIFICATION
-  Future<void> toggleNotification(bool value) async {
+  Future<void> toggleNotification(
+    bool value,
+  ) async {
     notification.value = value;
 
-    await settingsService.saveNotification(value);
+    await settingsService.saveNotification(
+      value,
+    );
   }
 
   // REFRESH
   Future<void> refreshData() async {
+    loadUser();
     await loadSettings();
     update();
   }
@@ -81,18 +131,14 @@ class SettingsController extends GetxController {
       await Get.find<HistoryController>().refreshData();
     }
 
-
     if (Get.isRegistered<StatisticsController>()) {
       await Get.find<StatisticsController>().refreshData();
     }
 
     Get.back();
-
-    await refreshData();
-
     Get.snackbar(
-      "Success",
-      "All activities have been deleted successfully.",
+      "Berhasil",
+      "Semua aktivitas berhasil dihapus",
       snackPosition: SnackPosition.BOTTOM,
     );
   }
@@ -104,11 +150,13 @@ class SettingsController extends GetxController {
 
       Get.back();
 
-      Get.offAllNamed(AppRoutes.login);
+      Get.offAllNamed(
+        AppRoutes.login,
+      );
 
       Get.snackbar(
         "Success",
-        "Logout berhasil.",
+        "Logout berhasil",
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {

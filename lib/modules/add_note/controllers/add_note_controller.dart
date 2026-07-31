@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../data/models/note_model.dart';
 import '../../../data/repositories/note_repository.dart';
-import 'package:my_daily/modules/home/controllers/home_controller.dart';
-import 'package:my_daily/modules/history/controllers/history_controller.dart';
-import 'package:my_daily/modules/statistics/controllers/statistics_controller.dart';
+
 import '../../../services/notification_service.dart';
+
+import '../../home/controllers/home_controller.dart';
+import '../../history/controllers/history_controller.dart';
+import '../../statistics/controllers/statistics_controller.dart';
 
 class AddNoteController extends GetxController {
   final activityController = TextEditingController();
@@ -17,11 +20,10 @@ class AddNoteController extends GetxController {
 
   final uuid = const Uuid();
 
-
-  // Observable
+  // STATE
   final selectedMood = "😊".obs;
   final selectedPriority = "Medium".obs;
-  final selectedCategory = "Study".obs;
+  final selectedCategory = "Belajar".obs;
 
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
@@ -30,15 +32,14 @@ class AddNoteController extends GetxController {
 
   NoteModel? editingNote;
 
-
   // FORMAT
   String get formattedDate =>
       DateFormat('dd MMM yyyy').format(selectedDate.value);
 
-  String formattedTime(BuildContext context) =>
-      selectedTime.value.format(context);
+  String get formattedTime =>
+      "${selectedTime.value.hour.toString().padLeft(2, '0')}:${selectedTime.value.minute.toString().padLeft(2, '0')}";
 
-  // PICK DATE
+  // DATE PICKER
   Future<void> pickDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
@@ -52,8 +53,7 @@ class AddNoteController extends GetxController {
     }
   }
 
-
-  // PICK TIME
+  // TIME PICKER
   Future<void> pickTime(BuildContext context) async {
     final picked = await showTimePicker(
       context: context,
@@ -65,17 +65,16 @@ class AddNoteController extends GetxController {
     }
   }
 
-  // LOAD NOTE FOR EDIT
+  // LOAD NOTE
   void loadNote(NoteModel note) {
     editingNote = note;
     isEditing.value = true;
-
     activityController.text = note.activity;
     noteController.text = note.note;
-
     selectedMood.value = note.mood;
     selectedPriority.value = note.priority;
-    selectedCategory.value = "Study";
+    selectedCategory.value = note.category;
+
     selectedDate.value = note.date;
 
     try {
@@ -97,7 +96,7 @@ class AddNoteController extends GetxController {
 
     selectedMood.value = "😊";
     selectedPriority.value = "Medium";
-    selectedCategory.value = "Study";
+    selectedCategory.value = "Belajar";
 
     selectedDate.value = DateTime.now();
     selectedTime.value = TimeOfDay.now();
@@ -106,44 +105,46 @@ class AddNoteController extends GetxController {
     isEditing.value = false;
   }
 
-  // SAVE / UPDATE NOTE
+  // SAVE / UPDATE
   Future<void> saveNote() async {
     try {
       if (activityController.text.trim().isEmpty) {
         Get.snackbar(
-          "Warning",
-          "Activity cannot be empty!",
+          "Peringatan",
+          "Nama aktivitas wajib diisi",
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
       }
 
+      final bool editing = isEditing.value;
       final note = NoteModel(
-        id: isEditing.value ? editingNote!.id : uuid.v4(),
+        id: editing
+            ? editingNote!.id
+            : uuid.v4(),
+
         activity: activityController.text.trim(),
         note: noteController.text.trim(),
         mood: selectedMood.value,
         priority: selectedPriority.value,
+        category: selectedCategory.value,
         date: selectedDate.value,
-        time: formattedTime(Get.context!),
+        time: formattedTime,
       );
 
-      // SAVE / UPDATE
-      if (isEditing.value) {
+      if (editing) {
         await repository.updateNote(note);
       } else {
         await repository.addNote(note);
       }
 
-      // NOTIFICATION
       await NotificationService.instance.showNotification(
-        title: isEditing.value
-            ? "Activity Updated"
-            : "New Activity Added",
+        title: editing
+            ? "Aktivitas Diperbarui"
+            : "Aktivitas Baru",
         body: note.activity,
       );
 
-      // REFRESH ALL MODULES
       if (Get.isRegistered<HomeController>()) {
         await Get.find<HomeController>().refreshData();
       }
@@ -156,16 +157,15 @@ class AddNoteController extends GetxController {
         await Get.find<StatisticsController>().refreshData();
       }
 
-      // RESET FORM
       resetForm();
 
       Get.back();
 
       Get.snackbar(
-        "Success",
-        isEditing.value
-            ? "Activity updated successfully 🎉"
-            : "Activity saved successfully 🎉",
+        "Berhasil",
+        editing
+            ? "Aktivitas berhasil diperbarui 🎉"
+            : "Aktivitas berhasil disimpan 🎉",
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {

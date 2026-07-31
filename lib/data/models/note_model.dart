@@ -26,6 +26,9 @@ class NoteModel extends HiveObject {
   @HiveField(6)
   String time;
 
+  @HiveField(7)
+  String category;
+
   NoteModel({
     required this.id,
     required this.activity,
@@ -34,6 +37,7 @@ class NoteModel extends HiveObject {
     required this.priority,
     required this.date,
     required this.time,
+    required this.category,
   });
 
 }

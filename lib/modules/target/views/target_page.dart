@@ -1,0 +1,19 @@
+import 'package:flutter/material.dart';
+
+class TargetPage extends StatelessWidget {
+  const TargetPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Target Hari Ini"),
+      ),
+      body: const Center(
+        child: Text(
+          "Halaman Kelola Target",
+        ),
+      ),
+    );
+  }
+}

@@ -8,26 +8,17 @@ import '../../../services/auth_service.dart';
 class LoginController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
 
-  //==========================================================
   // CONTROLLER
-  //==========================================================
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
-  //==========================================================
   // STATE
-  //==========================================================
-
   final isLoading = false.obs;
   final obscurePassword = true.obs;
 
-  //==========================================================
   // DISPOSE
-  //==========================================================
-
   @override
   void onClose() {
     emailController.dispose();
@@ -35,18 +26,12 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  //==========================================================
   // SHOW / HIDE PASSWORD
-  //==========================================================
-
   void togglePassword() {
     obscurePassword.toggle();
   }
 
-  //==========================================================
   // LOGIN
-  //==========================================================
-
   Future<void> login() async {
     if (!formKey.currentState!.validate()) return;
 
@@ -126,10 +111,7 @@ class LoginController extends GetxController {
     }
   }
 
-  //==========================================================
   // FORGOT PASSWORD
-  //==========================================================
-
   Future<void> forgotPassword() async {
     final email = emailController.text.trim();
 
@@ -183,10 +165,7 @@ class LoginController extends GetxController {
     }
   }
 
-  //==========================================================
   // VALIDATOR
-  //==========================================================
-
   String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return "Email wajib diisi";

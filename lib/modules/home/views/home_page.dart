@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:my_daily/app/routes/app_routes.dart';
 
-import '../controllers/home_controller.dart';
+import 'package:my_daily/app/widgets/app_background.dart';
+import 'package:my_daily/app/widgets/page_padding.dart';
+import 'package:my_daily/app/widgets/section_title.dart';
 
-import '../widgets/home_header.dart';
-import '../widgets/mood_card.dart';
-import '../widgets/today_activity_card.dart';
-import '../widgets/quick_menu_card.dart';
-import '../widgets/weekly_mood_card.dart';
-import '../widgets/progress_card.dart';
-import '../widgets/statistics_preview_card.dart';
-import '../widgets/calendar_card.dart';
+import 'package:my_daily/modules/home/widgets/home_header.dart';
+import 'package:my_daily/modules/home/widgets/progress_card.dart';
+import 'package:my_daily/modules/home/widgets/calendar_card.dart';
+import 'package:my_daily/modules/target/target_card.dart';
+
+import '../controllers/home_controller.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -20,186 +19,51 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: AppBackground(
+        child: PagePadding(
+          child: Obx(
+            () => SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
-      body: SafeArea(
-        child: Obx(
-          () => SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                  HomeHeader(
+                    username: controller.username.value,
+                    subtitle: controller.greeting.value,
+                    photoUrl: controller.photoUrl.value,
+                  ),
 
-                HomeHeader(
-                  username: controller.username.value,
-                  subtitle: controller.greeting.value,
-                  photoUrl: controller.photoUrl.value,
-                ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+                  ProgressCard(
+                    completed: controller.completedTask.value,
+                    total: controller.totalTask.value,
+                  ),
 
-                ProgressCard(
-                  completed: controller.completedTask.value,
-                  total: controller.totalTask.value,
-                ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+                  const CalendarCard(),
 
-                const CalendarCard(),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+                  const TargetCard(),
 
-                MoodCard(
-                  mood: controller.currentMood.value,
-                  emoji: controller.currentMoodEmoji.value,
-                ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 30),
-
-                /// Today's Activity
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Aktivitas Hari Ini",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.history);
-                      },
-                      child: const Text("Lihat Semua"),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 15),
-
-                if (controller.notes.isEmpty)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(25),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.inbox_rounded,
-                          size: 55,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          "Belum ada Aktivitas hari ini",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          "Tekan tombol + untuk menambahkan aktivitas baru",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.notes.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.notes[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: TodayActivityCard(
-                          emoji: item.mood,
-                          title: item.activity,
-                          time: item.time,
-                        ),
-                      );
+                  SectionTitle(
+                    title: 'Aktivitas Hari Ini',
+                    actionText: 'Lihat Semua',
+                    onAction: () {
+                      Get.toNamed(AppRoutes.history);
                     },
                   ),
 
-                const SizedBox(height: 30),
+                  const SizedBox(height: 12),
 
-                const Text(
-                  "Menu Cepat",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
 
-                const SizedBox(height: 15),
-
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.25,
-                  children: [
-                    QuickMenuCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Kalender",
-                      subtitle: "Lihat jadwal Anda",
-                      color: Colors.blue,
-                      onTap: () {
-                        Get.toNamed(AppRoutes.calendar);
-                      },
-                    ),
-                    QuickMenuCard(
-                      icon: Icons.bar_chart_rounded,
-                      title: "Statistik",
-                      subtitle: "Lihat statistik Anda",
-                      color: Colors.orange,
-                      onTap: () {
-                        Get.toNamed(AppRoutes.statistics);
-                      },
-                    ),
-                    QuickMenuCard(
-                      icon: Icons.history_rounded,
-                      title: "History",
-                      subtitle: "Lihat riwayat aktivitas Anda",
-                      color: Colors.green,
-                      onTap: () {
-                        Get.toNamed(AppRoutes.history);
-                      },
-                    ),
-                    QuickMenuCard(
-                      icon: Icons.settings_rounded,
-                      title: "Settings",
-                      subtitle: "Kelola preferensi Anda",
-                      color: Colors.deepPurple,
-                      onTap: () {
-                        Get.toNamed(AppRoutes.settings);
-                      },
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 30),
-
-                const StatisticsPreviewCard(),
-
-                const SizedBox(height: 30),
-
-                WeeklyMoodCard(
-                  moods: controller.weeklyMood,
-                ),
-
-                const SizedBox(height: 100),
-              ],
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,26 +1,28 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../data/models/note_model.dart';
 import '../../../data/repositories/note_repository.dart';
-import '../../../services/auth_service.dart';
 
 class HomeController extends GetxController {
   final repository = NoteRepository();
-  final AuthService authService = Get.find<AuthService>();
 
   // USER
   final username = "User".obs;
   final photoUrl = "".obs;
+  final email = "".obs;
 
   // GREETING
   final greeting = "".obs;
 
   final currentDate =
-      DateFormat("EEEE, dd MMMM yyyy").format(DateTime.now()).obs;
+      DateFormat("EEEE, dd MMMM yyyy")
+          .format(DateTime.now())
+          .obs;
 
   // NOTES
-  RxList<NoteModel> notes = <NoteModel>[].obs;
+  final notes = <NoteModel>[].obs;
 
   final completedTask = 0.obs;
   final totalTask = 0.obs;
@@ -50,11 +52,20 @@ class HomeController extends GetxController {
 
   // LOAD USER FIREBASE
   void loadUser() {
-    username.value =
-        authService.currentUser?.displayName ?? "User";
+    final User? user =
+        FirebaseAuth.instance.currentUser;
 
-    photoUrl.value =
-        authService.currentUser?.photoURL ?? "";
+    if (user != null) {
+      username.value =
+          user.displayName ??
+          user.email?.split("@").first ??
+          "User";
+
+      email.value = user.email ?? "";
+
+      photoUrl.value =
+          user.photoURL ?? "";
+    }
   }
 
   // LOAD NOTES
@@ -62,13 +73,12 @@ class HomeController extends GetxController {
     notes.value = await repository.getNotes();
 
     totalTask.value = notes.length;
-
-    // sementara semua dianggap selesai
     completedTask.value = notes.length;
 
     if (notes.isNotEmpty) {
       currentMoodEmoji.value = notes.last.mood;
-      currentMood.value = moodName(notes.last.mood);
+      currentMood.value =
+          moodName(notes.last.mood);
     }
   }
 

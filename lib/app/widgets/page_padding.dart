@@ -14,7 +14,7 @@ class PagePadding extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           20,
-          50,
+          20,
           20,
           20,
         ),

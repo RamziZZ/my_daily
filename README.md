@@ -8,13 +8,11 @@ MyDaily adalah aplikasi mobile berbasis Flutter yang dirancang untuk membantu pe
 
 > Tambahkan screenshot aplikasi di sini
 
-| Home | Add Activity | History |
-|------|--------------|----------|
-| Screenshot | Screenshot | Screenshot |
+| Login | Register | Home | 
+| Add Activity | History |
 
-| Calendar | Statistics | Settings |
-|-----------|------------|-----------|
-| Screenshot | Screenshot | Screenshot |
+| Statistics | Settings |
+
 
 ---
 

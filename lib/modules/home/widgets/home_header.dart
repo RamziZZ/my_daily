@@ -18,45 +18,36 @@ class HomeHeader extends StatelessWidget {
     final hasPhoto =
         photoUrl != null && photoUrl!.trim().isNotEmpty;
 
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
     final firstLetter =
-        username.isNotEmpty ? username[0].toUpperCase() : "U";
+        username.isNotEmpty
+            ? username[0].toUpperCase()
+            : "U";
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xff6C63FF),
-            Color(0xff8B7BFF),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.deepPurple.withValues(alpha: 0.20),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: isDark
+            ? const Color(0xff1E1E1E)
+            : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+
       ),
       child: Row(
         children: [
-          /// Avatar
           CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
+            radius: 24,
+            backgroundColor: Colors.grey.shade200,
             backgroundImage:
                 hasPhoto ? NetworkImage(photoUrl!) : null,
             child: !hasPhoto
                 ? Text(
                     firstLetter,
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xff6C63FF),
                     ),
                   )
                 : null,
@@ -64,17 +55,19 @@ class HomeHeader extends StatelessWidget {
 
           const SizedBox(width: 16),
 
-          /// Greeting
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Halo, $username 👋",
+                  "Halo, $username",
                   style: GoogleFonts.poppins(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: isDark
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
 
@@ -83,28 +76,13 @@ class HomeHeader extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.poppins(
-                    fontSize: 15,
-                    color: Colors.white70,
+                    fontSize: 14,
+                    color: isDark
+                        ? Colors.white70
+                        : Colors.black87,
                   ),
                 ),
               ],
-            ),
-          ),
-
-          /// Notification
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white24,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: IconButton(
-              onPressed: () {
-                // TODO: Notification
-              },
-              icon: const Icon(
-                Icons.notifications_none_rounded,
-                color: Colors.white,
-              ),
             ),
           ),
         ],

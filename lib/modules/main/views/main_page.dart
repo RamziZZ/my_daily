@@ -59,7 +59,7 @@ class MainPage extends GetView<MainController> {
             shape: const CircularNotchedRectangle(),
             notchMargin: 10,
             elevation: 15,
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
 
             child: SafeArea(
               top: false,

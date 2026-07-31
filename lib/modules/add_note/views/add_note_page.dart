@@ -3,13 +3,17 @@ import 'package:get/get.dart';
 
 import '../controllers/add_note_controller.dart';
 
-import '../widgets/activity_field.dart';
-import '../widgets/category_selector.dart';
-import '../widgets/date_time_card.dart';
 import '../widgets/mood_selector.dart';
-import '../widgets/priority_selector.dart';
-import '../widgets/note_field.dart';
 import '../widgets/save_button.dart';
+
+import 'package:my_daily/modules/add_note/widgets/add_activity_header.dart';
+import 'package:my_daily/modules/add_note/widgets/activity_category_grid.dart';
+import 'package:my_daily/modules/add_note/widgets/activity_name_field.dart';
+import 'package:my_daily/modules/add_note/widgets/activity_date_picker.dart';
+import 'package:my_daily/modules/add_note/widgets/activity_time_picker.dart';
+
+import 'package:my_daily/app/widgets/app_background.dart';
+import 'package:my_daily/app/widgets/page_padding.dart';
 
 class AddNotePage extends GetView<AddNoteController> {
   const AddNotePage({super.key});
@@ -17,146 +21,39 @@ class AddNotePage extends GetView<AddNoteController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Obx(
-          () => Text(
-            controller.isEditing.value
-                ? "Edit Activity"
-                : "Tambah Activity",
-          ),
-        ),
-      ),
-
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-
-          child: Obx(
-            () => Column(
+      body: AppBackground(
+        child: PagePadding(
+          child: SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                AddActivityHeader(),
 
-                /// Header
-                Text(
-                  controller.isEditing.value
-                      ? "Perbarui Aktivitasmu ✨"
-                      : "Buat Aktivitasmu hari ini ✨",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
+                SizedBox(height: 24),
 
-                const SizedBox(height: 25),
+                ActivityCategoryGrid(),
 
-                /// Activity
-                ActivityField(
-                  controller: controller.activityController,
-                ),
+                SizedBox(height: 24),
 
-                const SizedBox(height: 25),
+                ActivityNameField(),
 
-                /// Category
-                const Text(
-                  "Kategori Aktivitas",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                SizedBox(height: 16),
 
-                const SizedBox(height: 12),
+                ActivityDatePicker(),
 
-                CategorySelector(
-                  selectedCategory: controller.selectedCategory.value,
-                  onSelect: (value) {
-                    controller.selectedCategory.value = value;
-                  },
-                ),
+                SizedBox(height: 16),
 
-                const SizedBox(height: 25),
+                ActivityTimePicker(),
 
-                /// Date & Time
-                DateTimeCard(
-                  date: controller.formattedDate,
-                  time: controller.formattedTime(context),
-                  onDateTap: () {
-                    controller.pickDate(context);
-                  },
-                  onTimeTap: () {
-                    controller.pickTime(context);
-                  },
-                ),
+                SizedBox(height: 24),
 
-                const SizedBox(height: 25),
+                MoodSelector(),
 
-                /// Mood
-                const Text(
-                  "Bagaimana perasaanmu hari ini?",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                SizedBox(height: 32),
 
-                const SizedBox(height: 10),
-
-                MoodSelector(
-                  selectedMood: controller.selectedMood.value,
-                  onSelect: (value) {
-                    controller.selectedMood.value = value;
-                  },
-                ),
-
-                const SizedBox(height: 25),
-
-                /// Priority
-                const Text(
-                  "Priority",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                PrioritySelector(
-                  priority: controller.selectedPriority.value,
-                  onSelect: (value) {
-                    controller.selectedPriority.value = value;
-                  },
-                ),
-
-                const SizedBox(height: 25),
-
-                /// Notes
-                const Text(
-                  "Catatan Aktivitas",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                NoteField(
-                  controller: controller.noteController,
-                ),
-
-                const SizedBox(height: 35),
-
-                /// Save / Update Button
                 SaveButton(
-                  text: controller.isEditing.value
-                      ? "Ubah Aktivitas"
-                      : "Simpan Aktivitas",
                   onTap: controller.saveNote,
                 ),
-
-                const SizedBox(height: 30),
               ],
             ),
           ),

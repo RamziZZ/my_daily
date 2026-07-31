@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:my_daily/modules/target/views/target_page.dart';
 
 import '../../modules/home/bindings/home_binding.dart';
 import '../../modules/home/views/home_page.dart';
@@ -14,6 +15,9 @@ import '../../modules/register/views/register_page.dart';
 import '../../modules/main/bindings/main_binding.dart';
 import '../../modules/login/bindings/login_binding.dart';
 import '../../modules/register/bindings/register_binding.dart';
+import '../../modules/settings/views/edit_username_page.dart';
+import '../../modules/settings/views/username_success_page.dart';
+import '../../modules/settings/bindings/edit_username_binding.dart';
 
 import 'app_routes.dart';
 
@@ -80,6 +84,21 @@ class AppPages {
       binding: RegisterBinding(),
     ),
 
+    GetPage(
+      name: AppRoutes.target,
+      page: () => const TargetPage(),
+    ),
+
+    GetPage(
+      name: AppRoutes.editUsername,
+      page: () => const EditUsernamePage(),
+      binding: EditUsernameBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.usernameSuccess,
+      page: () => const UsernameSuccessPage(),
+    ),
 
   ];
 }

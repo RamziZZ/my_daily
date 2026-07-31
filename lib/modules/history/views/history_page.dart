@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app/routes/app_routes.dart';
+import 'package:my_daily/app/widgets/app_background.dart';
 import '../../../app/widgets/page_padding.dart';
-import '../../add_note/controllers/add_note_controller.dart';
+
 import '../controllers/history_controller.dart';
+
+import '../widgets/history_header.dart';
+import '../widgets/history_search_box.dart';
+import '../widgets/history_filter_tabs.dart';
+
+import '../widgets/history_activity_card.dart';
 
 class HistoryPage extends GetView<HistoryController> {
   const HistoryPage({super.key});
@@ -12,295 +18,62 @@ class HistoryPage extends GetView<HistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: AppBackground(
+        child: PagePadding(
+          child: Obx(
+            () => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
 
-      body: PagePadding(
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Riwayat Aktivitas",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
+                /// Header
+                const HistoryHeader(),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-              TextField(
-                onChanged: controller.searchNote,
-                decoration: InputDecoration(
-                  hintText: "Cari aktivitas...",
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Theme.of(context).cardColor,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none,
-                  ),
+                /// Search
+                HistorySearchBox(
+                  onChanged: controller.searchNote,
                 ),
-              ),
 
-              const SizedBox(height: 15),
+                const SizedBox(height: 20),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 40,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          _buildChip("Semua"),
-                          _buildChip("Hari Ini"),
-                          _buildChip("Minggu"),
-                          _buildChip("Bulan"),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.sort),
-
-                    onSelected: controller.changeSort,
-
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(
-                        value: "Newest",
-                        child: Text("Terbaru"),
-                      ),
-                      PopupMenuItem(
-                        value: "Oldest",
-                        child: Text("Terlama"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 15),
-
-              Expanded(
-                child: controller.filteredNotes.isEmpty
-                    ? _buildEmptyState(context)
-                    : ListView.builder(
-                        itemCount: controller.filteredNotes.length,
-                        itemBuilder: (context, index) {
-                          final note =
-                              controller.filteredNotes[index];
-
-                          return Dismissible(
-                            key: ValueKey(note.id),
-
-                            direction:
-                                DismissDirection.endToStart,
-
-                            confirmDismiss: (_) async {
-                              return await Get.dialog<bool>(
-                                AlertDialog(
-                                  title: const Text(
-                                      "Hapus Aktivitas"),
-                                  content: Text(
-                                    "Hapus '${note.activity}' ?",
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Get.back(
-                                              result: false),
-                                      child:
-                                          const Text("Batal"),
-                                    ),
-                                    FilledButton(
-                                      style:
-                                          FilledButton.styleFrom(
-                                        backgroundColor:
-                                            Colors.red,
-                                      ),
-                                      onPressed: () =>
-                                          Get.back(
-                                              result: true),
-                                      child:
-                                          const Text("Hapus"),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-
-                            onDismissed: (_) {
-                              controller.deleteNote(
-                                  note.id);
-                            },
-
-                            background: Container(
-                              margin:
-                                  const EdgeInsets.only(
-                                      bottom: 15),
-                              alignment:
-                                  Alignment.centerRight,
-                              padding:
-                                  const EdgeInsets.only(
-                                      right: 24),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius:
-                                    BorderRadius.circular(
-                                        18),
-                              ),
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-
-                            child: Card(
-                              margin:
-                                  const EdgeInsets.only(
-                                      bottom: 15),
-                              child: ListTile(
-                                onTap: () {
-                                  final addController = Get.find<AddNoteController>();
-                                  addController.loadNote(note);
-                                  Get.toNamed(AppRoutes.addNote);
-
-                                },
-
-                                contentPadding:
-                                    const EdgeInsets.all(
-                                        16),
-
-                                leading: CircleAvatar(
-                                  backgroundColor:
-                                      Colors.deepPurple
-                                          .withValues(alpha: 0.15),
-                                  child: Text(
-                                    note.mood,
-                                    style:
-                                        const TextStyle(
-                                            fontSize: 22),
-                                  ),
-                                ),
-
-                                title: Text(
-                                  note.activity,
-                                  style:
-                                      const TextStyle(
-                                    fontWeight:
-                                        FontWeight.bold,
-                                  ),
-                                ),
-
-                                subtitle: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment
-                                          .start,
-                                  children: [
-                                    const SizedBox(
-                                        height: 6),
-
-                                    Text(
-                                      note.note.isEmpty
-                                          ? "-"
-                                          : note.note,
-                                    ),
-
-                                    const SizedBox(
-                                        height: 10),
-
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons
-                                              .calendar_today,
-                                          size: 14,
-                                        ),
-                                        const SizedBox(
-                                            width: 5),
-                                        Text(
-                                          "${note.date.day}/${note.date.month}/${note.date.year}",
-                                        ),
-                                        const SizedBox(
-                                            width: 15),
-                                        const Icon(
-                                          Icons
-                                              .access_time,
-                                          size: 14,
-                                        ),
-                                        const SizedBox(
-                                            width: 5),
-                                        Text(note.time),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-
-                                trailing:
-                                    const Icon(Icons.chevron_right),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChip(String title) {
-    return Obx(
-      () => Padding(
-        padding: const EdgeInsets.only(right: 8),
-        child: ChoiceChip(
-          label: Text(title),
-          selected:
-              controller.selectedFilter.value == title,
-          onSelected: (_) =>
-              controller.changeFilter(title),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.history_toggle_off_rounded,
-            size: 90,
-            color:
-                Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(height: 18),
-          Text(
-            "Tidak ada aktivitas",
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(
-                  fontWeight: FontWeight.bold,
+                /// Filter
+                HistoryFilterTabs(
+                  selected: controller.selectedTab.value,
+                  onChanged: controller.changeTab,
                 ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Mulai menulis aktivitas harian Anda ✨",
-            style: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.15,
+
+                const SizedBox(height: 24),
+
+                /// List Riwayat
+                Expanded(
+                  child: controller.filteredNotes.isEmpty
+                      ? const Center(
+                          child: Text("Belum ada aktivitas"),
+                        )
+                      : ListView.builder(
+                          itemCount: controller.filteredNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = controller.filteredNotes[index];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: HistoryActivityCard(
+                                emoji: note.mood,
+                                title: note.activity,
+                                subtitle: note.note,
+                                time: note.time,
+                              ),
+                            );
+                          },
+                        ),
+                ),
+          
+              ],
             ),
           ),
-          )
-        ],
+        ),
       ),
     );
   }

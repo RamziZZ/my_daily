@@ -1,23 +1,23 @@
 import 'package:get/get.dart';
 
-import 'package:my_daily/data/models/note_model.dart';
-import 'package:my_daily/data/repositories/note_repository.dart';
+import '../../../data/models/note_model.dart';
+import '../../../data/repositories/note_repository.dart';
 
-import 'package:my_daily/modules/home/controllers/home_controller.dart';
-import 'package:my_daily/modules/statistics/controllers/statistics_controller.dart';
+import '../../home/controllers/home_controller.dart';
+import '../../statistics/controllers/statistics_controller.dart';
 
 class HistoryController extends GetxController {
-  final repository = NoteRepository();
+  final NoteRepository repository = NoteRepository();
 
-  final RxList<NoteModel> notes = <NoteModel>[].obs;
-  final RxList<NoteModel> filteredNotes = <NoteModel>[].obs;
+  final notes = <NoteModel>[].obs;
+  final filteredNotes = <NoteModel>[].obs;
 
   final search = "".obs;
 
-  /// Filter
-  final selectedFilter = "All".obs;
+  /// Semua | Target | Aktivitas
+  final selectedTab = "Semua".obs;
 
-  /// Sort
+  /// Newest | Oldest
   final selectedSort = "Newest".obs;
 
   @override
@@ -26,13 +26,12 @@ class HistoryController extends GetxController {
     loadNotes();
   }
 
-  // Load notes from repository
+  // LOAD DATA HIVE
   Future<void> loadNotes() async {
     notes.value = await repository.getNotes();
     applyFilter();
   }
 
-  // Refresh data
   Future<void> refreshData() async {
     await loadNotes();
   }
@@ -43,9 +42,9 @@ class HistoryController extends GetxController {
     applyFilter();
   }
 
-  // FILTER
-  void changeFilter(String value) {
-    selectedFilter.value = value;
+  // TAB
+  void changeTab(String value) {
+    selectedTab.value = value;
     applyFilter();
   }
 
@@ -55,7 +54,7 @@ class HistoryController extends GetxController {
     applyFilter();
   }
 
-  // APPLY SEARCH + FILTER + SORT
+  // FILTER DATA
   void applyFilter() {
     List<NoteModel> result = List.from(notes);
 
@@ -71,40 +70,21 @@ class HistoryController extends GetxController {
       }).toList();
     }
 
-    // FILTER
-    final now = DateTime.now();
-    switch (selectedFilter.value) {
-      case "Today":
+    // FILTER TAB
+    switch (selectedTab.value) {
+      case "Target":
         result = result.where((note) {
-          return note.date.year == now.year &&
-              note.date.month == now.month &&
-              note.date.day == now.day;
+          return note.category == "Target";
         }).toList();
         break;
 
-      case "Week":
-        final firstDay =
-            now.subtract(Duration(days: now.weekday - 1));
-
-        final lastDay =
-            firstDay.add(const Duration(days: 6));
-
+      case "Aktivitas":
         result = result.where((note) {
-          return note.date.isAfter(
-                  firstDay.subtract(const Duration(days: 1))) &&
-              note.date.isBefore(
-                  lastDay.add(const Duration(days: 1)));
+          return note.category != "Target";
         }).toList();
         break;
 
-      case "Month":
-        result = result.where((note) {
-          return note.date.month == now.month &&
-              note.date.year == now.year;
-        }).toList();
-        break;
-
-      case "All":
+      case "Semua":
       default:
         break;
     }
@@ -112,18 +92,22 @@ class HistoryController extends GetxController {
     // SORT
     switch (selectedSort.value) {
       case "Newest":
-        result.sort((a, b) => b.date.compareTo(a.date));
+        result.sort(
+          (a, b) => b.date.compareTo(a.date),
+        );
         break;
 
       case "Oldest":
-        result.sort((a, b) => a.date.compareTo(b.date));
+        result.sort(
+          (a, b) => a.date.compareTo(b.date),
+        );
         break;
     }
 
     filteredNotes.assignAll(result);
   }
 
-  // DELETE NOTE
+  // DELETE
   Future<void> deleteNote(String id) async {
     await repository.deleteNoteById(id);
 
@@ -138,8 +122,8 @@ class HistoryController extends GetxController {
     }
 
     Get.snackbar(
-      "Deleted",
-      "Activity deleted successfully",
+      "Berhasil",
+      "Aktivitas berhasil dihapus",
       snackPosition: SnackPosition.BOTTOM,
     );
   }

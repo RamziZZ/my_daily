@@ -7,7 +7,10 @@ abstract class AppRoutes {
   static const calendar = '/calendar';
   static const statistics = '/statistics';
   static const settings = '/settings';
+  static const target = '/target';
   static const main = '/main';
+  static const editUsername = '/edit-username';
+  static const usernameSuccess = '/username-success';
 
   // AUTH
   static const login = '/login';
