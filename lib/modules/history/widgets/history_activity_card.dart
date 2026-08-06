@@ -5,6 +5,7 @@ class HistoryActivityCard extends StatelessWidget {
   final String subtitle;
   final String emoji;
   final String time;
+  final VoidCallback? onDelete;
 
   const HistoryActivityCard({
     super.key,
@@ -12,6 +13,7 @@ class HistoryActivityCard extends StatelessWidget {
     required this.subtitle,
     required this.emoji,
     required this.time,
+    this.onDelete,
   });
 
   @override
@@ -58,6 +60,14 @@ class HistoryActivityCard extends StatelessWidget {
                 Text(subtitle),
                 Text(time),
               ],
+            ),
+          ),
+
+          IconButton(
+            onPressed: onDelete,
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: Theme.of(context).colorScheme.error,
             ),
           ),
         ],

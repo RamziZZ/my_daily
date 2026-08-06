@@ -18,9 +18,7 @@ class EditUsernamePage extends GetView<EditUsernameController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //----------------------------------
                 // HEADER
-                //----------------------------------
 
                 IconButton(
                   onPressed: Get.back,
@@ -56,10 +54,7 @@ class EditUsernamePage extends GetView<EditUsernameController> {
 
                 const SizedBox(height: 30),
 
-                //----------------------------------
                 // PROFILE PREVIEW
-                //----------------------------------
-
                 Center(
                   child: Obx(
                     () => CircleAvatar(
@@ -101,10 +96,7 @@ class EditUsernamePage extends GetView<EditUsernameController> {
 
                 const SizedBox(height: 40),
 
-                //----------------------------------
                 // TEXTFIELD
-                //----------------------------------
-
                 const Text(
                   "Username Baru",
                   style: TextStyle(
@@ -133,10 +125,8 @@ class EditUsernamePage extends GetView<EditUsernameController> {
 
                 const Spacer(),
 
-                //----------------------------------
-                // BUTTON
-                //----------------------------------
 
+                // BUTTON
                 SizedBox(
                   width: double.infinity,
                   height: 56,

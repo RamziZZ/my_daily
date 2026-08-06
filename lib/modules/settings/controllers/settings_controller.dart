@@ -56,41 +56,45 @@ class SettingsController extends GetxController {
   }
 
   // CHANGE USERNAME
-  Future<void> changeUsername(
-    String value,
-  ) async {
-    if (value.trim().isEmpty) return;
+  Future<void> changeUsername(String value) async {
+  if (value.trim().isEmpty) return;
 
-    try {
-      final user = FirebaseAuth.instance.currentUser;
+  try {
+    final user = FirebaseAuth.instance.currentUser;
 
-      if (user != null) {
-        await user.updateDisplayName(
-          value.trim(),
-        );
-
-        await user.reload();
-
-        loadUser();
-      }
-
-      await settingsService.saveUsername(
+    if (user != null) {
+      await user.updateDisplayName(
         value.trim(),
       );
 
-      Get.snackbar(
-        "Berhasil",
-        "Username berhasil diperbarui",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      await user.reload();
+
+      loadUser();
     }
+
+    await settingsService.saveUsername(
+      value.trim(),
+    );
+
+    // REFRESH HOME
+    if (Get.isRegistered<HomeController>()) {
+      await Get.find<HomeController>()
+          .refreshData();
+    }
+
+    Get.snackbar(
+      "Berhasil",
+      "Username berhasil diperbarui",
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  } catch (e) {
+    Get.snackbar(
+      "Error",
+      e.toString(),
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
+}
 
   // DARK MODE
   Future<void> toggleDarkMode(

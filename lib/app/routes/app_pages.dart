@@ -18,6 +18,11 @@ import '../../modules/register/bindings/register_binding.dart';
 import '../../modules/settings/views/edit_username_page.dart';
 import '../../modules/settings/views/username_success_page.dart';
 import '../../modules/settings/bindings/edit_username_binding.dart';
+import '../../modules/target/bindings/target_binding.dart';
+import '../../modules/target/views/add_target_page.dart';
+import '../../modules/target/bindings/add_target_binding.dart';
+import '../../modules/target/views/target_success_page.dart';
+import '../../modules/target/bindings/target_success_binding.dart';
 
 import 'app_routes.dart';
 
@@ -55,12 +60,6 @@ class AppPages {
     ),
 
     GetPage(
-      name: AppRoutes.calendar,
-      page: () => const MainPage(),
-      binding: MainBinding(),
-    ),
-
-    GetPage(
       name: AppRoutes.statistics,
       page: () => const MainPage(),
       binding: MainBinding(),
@@ -87,6 +86,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.target,
       page: () => const TargetPage(),
+      binding: TargetBinding(),
     ),
 
     GetPage(
@@ -99,6 +99,20 @@ class AppPages {
       name: AppRoutes.usernameSuccess,
       page: () => const UsernameSuccessPage(),
     ),
+
+    GetPage(
+      name: AppRoutes.addTarget,
+      page: () => const AddTargetPage(),
+      binding: AddTargetBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.targetSuccess,
+      page: () => const TargetSuccessPage(),
+      binding: TargetSuccessBinding(),
+    ),
+
+    
 
   ];
 }

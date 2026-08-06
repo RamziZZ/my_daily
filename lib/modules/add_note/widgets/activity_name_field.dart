@@ -8,16 +8,26 @@ class ActivityNameField extends GetView<AddNoteController> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller.activityController,
-      decoration: InputDecoration(
-        hintText: "Nama Aktivitas",
-        filled: true,
-        fillColor: Theme.of(context).cardColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: controller.activityController,
+          decoration: const InputDecoration(
+            hintText: "Nama Aktivitas",
+          ),
         ),
-      ),
+
+        const SizedBox(height: 12),
+
+        TextField(
+          controller: controller.noteController,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            hintText: "Catatan",
+          ),
+        ),
+      ],
     );
   }
 }

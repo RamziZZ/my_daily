@@ -83,8 +83,11 @@ class HomeController extends GetxController {
   }
 
   Future<void> refreshData() async {
-    loadUser();
-    await loadNotes();
+    final user = FirebaseAuth.instance.currentUser;
+    username.value = 
+      user?.displayName ??
+      user?.email?.split("@").first ??
+      'User';
   }
 
   // MOOD NAME
@@ -126,5 +129,9 @@ class HomeController extends GetxController {
     } else {
       greeting.value = "Good Night";
     }
+  }
+
+  void goToHistory() {
+    Get.toNamed("/history");
   }
 }

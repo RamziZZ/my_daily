@@ -9,9 +9,16 @@ class MoodSelector extends GetView<AddNoteController> {
 
   @override
   Widget build(BuildContext context) {
+    final moods = [
+      {"emoji": "😊", "title": "Senang"},
+      {"emoji": "🙂", "title": "Tenang"},
+      {"emoji": "😐", "title": "Biasa"},
+      {"emoji": "😔", "title": "Sedih"},
+      {"emoji": "😡", "title": "Marah"},
+    ];
+
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           "Bagaimana Mood Kamu Hari Ini ?",
@@ -24,55 +31,21 @@ class MoodSelector extends GetView<AddNoteController> {
 
         Obx(
           () => Row(
-            children: [
-              Expanded(
+            children: moods.map((mood) {
+              return Expanded(
                 child: MoodItem(
-                  emoji: "😊",
-                  title: "Bahagia",
+                  emoji: mood["emoji"]!,
+                  title: mood["title"]!,
                   selected:
                       controller.selectedMood.value ==
-                      "😊",
-                  onTap: () => controller
-                      .selectedMood.value = "😊",
+                      mood["emoji"],
+                  onTap: () {
+                    controller.selectedMood.value =
+                        mood["emoji"]!;
+                  },
                 ),
-              ),
-
-              Expanded(
-                child: MoodItem(
-                  emoji: "😐",
-                  title: "Biasa",
-                  selected:
-                      controller.selectedMood.value ==
-                      "😐",
-                  onTap: () => controller
-                      .selectedMood.value = "😐",
-                ),
-              ),
-
-              Expanded(
-                child: MoodItem(
-                  emoji: "😭",
-                  title: "Sedih",
-                  selected:
-                      controller.selectedMood.value ==
-                      "😭",
-                  onTap: () => controller
-                      .selectedMood.value = "😭",
-                ),
-              ),
-
-              Expanded(
-                child: MoodItem(
-                  emoji: "😡",
-                  title: "Marah",
-                  selected:
-                      controller.selectedMood.value ==
-                      "😡",
-                  onTap: () => controller
-                      .selectedMood.value = "😡",
-                ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
         ),
       ],

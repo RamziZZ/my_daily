@@ -5,6 +5,7 @@ class HistoryTargetCard extends StatelessWidget {
   final String time;
   final bool completed;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
   const HistoryTargetCard({
     super.key,
@@ -12,6 +13,7 @@ class HistoryTargetCard extends StatelessWidget {
     required this.time,
     this.completed = true,
     this.onTap,
+    this.onDelete,
   });
 
   @override
@@ -75,6 +77,14 @@ class HistoryTargetCard extends StatelessWidget {
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
+                  ),
+                ),
+
+                IconButton(
+                  onPressed: onDelete,
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    color: theme.colorScheme.error,
                   ),
                 ),
               ],

@@ -10,6 +10,7 @@ import 'package:my_daily/app/routes/app_routes.dart';
 import 'package:my_daily/app/theme/app_theme.dart';
 
 import 'package:my_daily/data/models/note_model.dart';
+import 'package:my_daily/data/models/target_model.dart';
 import 'package:my_daily/data/repositories/note_repository.dart';
 
 import 'services/notification_service.dart';
@@ -33,6 +34,9 @@ Future<void> main() async {
 
   // Register Adapter
   Hive.registerAdapter(NoteModelAdapter());
+
+  // Register Adapter for TargetModel
+  Hive.registerAdapter(TargetModelAdapter());
 
   // Inisialisasi Theme Service
   await Get.putAsync(() => ThemeService().init());

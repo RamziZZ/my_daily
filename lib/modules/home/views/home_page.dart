@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_daily/app/routes/app_routes.dart';
+//import 'package:my_daily/app/routes/app_routes.dart';
+import 'package:my_daily/modules/main/controllers/main_controller.dart';
 
 import 'package:my_daily/app/widgets/app_background.dart';
 import 'package:my_daily/app/widgets/page_padding.dart';
@@ -9,7 +10,7 @@ import 'package:my_daily/app/widgets/section_title.dart';
 import 'package:my_daily/modules/home/widgets/home_header.dart';
 import 'package:my_daily/modules/home/widgets/progress_card.dart';
 import 'package:my_daily/modules/home/widgets/calendar_card.dart';
-import 'package:my_daily/modules/target/target_card.dart';
+import 'package:my_daily/modules/target/widgets/target_card.dart';
 
 import '../controllers/home_controller.dart';
 
@@ -54,7 +55,7 @@ class HomePage extends GetView<HomeController> {
                     title: 'Aktivitas Hari Ini',
                     actionText: 'Lihat Semua',
                     onAction: () {
-                      Get.toNamed(AppRoutes.history);
+                      Get.find<MainController>().changeTab(1);
                     },
                   ),
 

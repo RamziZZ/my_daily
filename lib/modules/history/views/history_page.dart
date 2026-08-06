@@ -11,6 +11,7 @@ import '../widgets/history_search_box.dart';
 import '../widgets/history_filter_tabs.dart';
 
 import '../widgets/history_activity_card.dart';
+import '../widgets/history_target_card.dart';
 
 class HistoryPage extends GetView<HistoryController> {
   const HistoryPage({super.key});
@@ -57,6 +58,18 @@ class HistoryPage extends GetView<HistoryController> {
                           itemBuilder: (context, index) {
                             final note = controller.filteredNotes[index];
 
+                            if (note.activity == "Target") {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: HistoryTargetCard(
+                                  title: note.activity,
+                                  time: note.time,
+                                  onTap:() {
+                                  },
+                                ),
+                              );
+                            }
+
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: HistoryActivityCard(
@@ -64,6 +77,20 @@ class HistoryPage extends GetView<HistoryController> {
                                 title: note.activity,
                                 subtitle: note.note,
                                 time: note.time,
+                                onDelete: () {
+                                  Get.defaultDialog(
+                                    title: "Hapus Catatan",
+                                    middleText:
+                                        "Apakah kamu yakin ingin menghapus catatan ini?",
+                                    textCancel: "Batal",
+                                    textConfirm: "Hapus",
+                                    confirmTextColor: Colors.white,
+                                    onConfirm: () {
+                                      controller.deleteNote(note.id);
+                                      Get.back();
+                                    },
+                                  );
+                                }
                               ),
                             );
                           },
