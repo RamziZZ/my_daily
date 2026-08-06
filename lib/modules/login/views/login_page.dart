@@ -13,6 +13,8 @@ import '../widgets/password_field.dart';
 import '../widgets/login_button.dart';
 import '../widgets/register_text.dart';
 
+import '../../../app/routes/app_routes.dart';
+
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
 
@@ -40,6 +42,26 @@ class LoginPage extends GetView<LoginController> {
                     const SizedBox(height: 18),
 
                     const PasswordField(),
+
+                    const SizedBox(height: 8),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Get.toNamed(
+                            AppRoutes.forgotPassword,
+                          );
+                        },
+                        child: const Text(
+                          "Lupa Kata Sandi?",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: 30),
 

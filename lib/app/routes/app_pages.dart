@@ -23,6 +23,9 @@ import '../../modules/target/views/add_target_page.dart';
 import '../../modules/target/bindings/add_target_binding.dart';
 import '../../modules/target/views/target_success_page.dart';
 import '../../modules/target/bindings/target_success_binding.dart';
+import '../../modules/forgot_password/views/forgot_password_page.dart';
+import '../../modules/forgot_password/views/password_success_page.dart';
+import '../../modules/forgot_password/bindings/forgot_password_binding.dart';
 
 import 'app_routes.dart';
 
@@ -112,7 +115,17 @@ class AppPages {
       binding: TargetSuccessBinding(),
     ),
 
-    
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordPage(),
+      binding: ForgotPasswordBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.passwordSuccess,
+      page: () => const PasswordSuccessPage(),
+      
+    ),
 
   ];
 }
